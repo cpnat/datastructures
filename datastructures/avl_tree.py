@@ -3,6 +3,44 @@ from datastructures.node import AVLTreeNode
 
 class AVLTree:
 
+    def __init__(self):
+        self.root = None
+
+    def __str__(self):
+        return str(self.root) if self.root is not None else ''
+
+    def __insert_recursion(self, node, val):
+        if node is None:
+            return AVLTreeNode(val, None, None)
+
+        if val < node.val:
+            node.left = self.__insert_recursion(node.left, val)
+        elif val > node.val:
+            node.right = self.__insert_recursion(node.right, val)
+        elif val == node.val:
+            raise ValueError('Value already contained within tree')
+
+        node.height = max(AVLTree.node_height(node.left), AVLTree.node_height(node.right)) + 1
+
+        return AVLTree.node_balance(node)
+
+    def insert(self, val):
+        self.root = self.__insert_recursion(self.root, val)
+
+    def __depth_recursion(self, node, depth=0):
+        if node is None:
+            return depth
+
+        left = self.__depth_recursion(node.left, depth + 1)
+        right = self.__depth_recursion(node.right, depth + 1)
+        return max(left, right)
+
+    def depth(self):
+        if self.root is None:
+            return -1
+        else:
+            return self.__depth_recursion(self.root)
+
     @staticmethod
     def node_height(node):
         return node.height if node is not None else -1
@@ -58,41 +96,3 @@ class AVLTree:
             node = AVLTree.node_rotate_left(node)
 
         return node
-
-    def __init__(self):
-        self.root = None
-
-    def __str__(self):
-        return str(self.root) if self.root is not None else ''
-
-    def __insert_recursion(self, node, val):
-        if node is None:
-            return AVLTreeNode(val, None, None)
-
-        if val < node.val:
-            node.left = self.__insert_recursion(node.left, val)
-        elif val > node.val:
-            node.right = self.__insert_recursion(node.right, val)
-        elif val == node.val:
-            raise ValueError('Value already contained within tree')
-
-        node.height = max(AVLTree.node_height(node.left), AVLTree.node_height(node.right)) + 1
-
-        return AVLTree.node_balance(node)
-
-    def insert(self, val):
-        self.root = self.__insert_recursion(self.root, val)
-
-    def __depth_recursion(self, node, depth=0):
-        if node is None:
-            return depth
-
-        left = self.__depth_recursion(node.left, depth + 1)
-        right = self.__depth_recursion(node.right, depth + 1)
-        return max(left, right)
-
-    def depth(self):
-        if self.root is None:
-            return -1
-        else:
-            return self.__depth_recursion(self.root)

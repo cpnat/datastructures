@@ -1,3 +1,10 @@
+class LinkedListNode:
+
+    def __init__(self, val, next):
+        self.next = next
+        self.val = val
+
+
 class TreeNode:
 
     def __init__(self, val, left, right):

@@ -3,24 +3,11 @@ import ctypes
 
 class DynamicArray:
 
-    @staticmethod
-    def intersect(arr1, arr2):
+    def __init__(self, size=1):
 
-        arr1_set = set()
-        arr2_set = set()
+        if size < 1:
+            raise ValueError('Array initialisation size must be >= 1')
 
-        intersect = DynamicArray(1)
-
-        for el1 in arr1:
-            arr1_set.add(el1)
-
-        for el2 in arr2:
-            if el2 in arr1_set and el2 not in arr2_set:
-                intersect.insert(el2)
-                arr2_set.add(el2)
-        return intersect
-
-    def __init__(self, size):
         self.size = size
         self.items = 0
         self.arr = (self.size * ctypes.py_object)()
@@ -42,7 +29,10 @@ class DynamicArray:
         self.num += 1
         return self.arr[self.num]
 
-    def _resize(self, new_size):
+    def __getitem__(self, item):
+        return self.arr[item]
+
+    def __resize(self, new_size):
 
         temp = (new_size * ctypes.py_object)()
 
@@ -55,7 +45,7 @@ class DynamicArray:
     def insert(self, num):
 
         if self.items + 1 > self.size:
-            self._resize(self.size * 2)
+            self.__resize(self.size * 2)
 
         self.arr[self.items] = num
         self.items += 1
@@ -81,7 +71,12 @@ class DynamicArray:
         self.items -= 1
 
         if self.size // 2 > self.items:
-            self._resize(self.size // 2)
+            self.__resize(self.size // 2)
+
+    def pop(self):
+        pop = self.arr[self.items - 1]
+        self.delete(self.items - 1)
+        return pop
 
     def max(self):
         curr_max = 0
@@ -101,3 +96,20 @@ class DynamicArray:
             self.arr[i+1] = self.arr[i]
 
         self.arr[idx] = num
+
+    @staticmethod
+    def intersect(arr1, arr2):
+
+        arr1_set = set()
+        arr2_set = set()
+
+        intersect = DynamicArray(1)
+
+        for el1 in arr1:
+            arr1_set.add(el1)
+
+        for el2 in arr2:
+            if el2 in arr1_set and el2 not in arr2_set:
+                intersect.insert(el2)
+                arr2_set.add(el2)
+        return intersect
